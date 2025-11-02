@@ -1,5 +1,6 @@
 import express from "express";
 import { MongoDB} from './bd.js';
+import cors from 'cors';
 
 const user = process.env.USER_BD;
 const db_password = process.env.KEY_BD;
