@@ -4,15 +4,13 @@ import { MongoClient, ServerApiVersion, ObjectId} from 'mongodb';
 const user = process.env.USER_BD
 const db_password = process.env.KEY_BD
 
-const url = `mongodb+srv://${user}:${db_password}@test.slygxwk.mongodb.net/?appName=test`;
+// Configuración de la URL de conexión con parámetros SSL explícitos
+const url = `mongodb+srv://${user}:${db_password}@test.slygxwk.mongodb.net/?ssl=true&retryWrites=true&w=majority`;
 
-// Habilitar TLS/SSL por defecto. Puedes controlar esto con las siguientes
-// variables de entorno en entornos donde necesites desactivar la verificación
-// de certificados (solo para desarrollo):
-// - DB_TLS ("true"|"false")  -> si la conexión usa TLS. Por defecto true.
-// - DB_TLS_INSECURE ("true"|"false") -> si se permiten certificados inválidos.
-const tls = process.env.DB_TLS ? process.env.DB_TLS === 'true' : true;
-const tlsAllowInvalidCertificates = process.env.DB_TLS_INSECURE === 'true';
+// Configuración SSL/TLS más permisiva para desarrollo
+const isDevEnvironment = process.env.NODE_ENV !== 'production';
+const ssl = true; // Siempre usar SSL
+const sslValidate = !isDevEnvironment; // Solo validar certificados en producción
 
 export class MongoDB {
     constructor(url,dbName) {
@@ -22,11 +20,11 @@ export class MongoDB {
                 strict: true,
                 deprecationErrors: true,
             },
-            // Opciones TLS/SSL explícitas. Para conexiones a Atlas via mongodb+srv
-            // TLS normalmente está habilitado por defecto, pero las opciones
-            // explícitas ayudan cuando el servidor exige SSL.
-            tls,
-            tlsAllowInvalidCertificates,
+            ssl: ssl, // Siempre usar SSL
+            sslValidate: sslValidate, // Validar certificados solo en producción
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            retryWrites: true,
         })
 
         this.dbName = dbName;
@@ -35,11 +33,18 @@ export class MongoDB {
     }
 
     async connect(){
-        await this.client.connect();
+        try {
+            await this.client.connect();
             // Send a ping to confirm a successful connection
-        await this.client.db("admin").command({ ping: 1 });
-        console.log('conectado a la bd')
-        // this.db = await awthis.client.db(this.dbName);
+            await this.client.db("admin").command({ ping: 1 });
+            console.log('Conexión exitosa a MongoDB');
+        } catch (error) {
+            console.error('Error de conexión a MongoDB:', error);
+            if (error.message.includes('SSL routines')) {
+                console.error('Error SSL/TLS. Verifica la configuración SSL y los certificados.');
+            }
+            throw error;
+        }
     }
 
     async getCollection(collectionName){
