@@ -18,10 +18,18 @@ const AccessControl = [
 ] 
 
 app.use(cors({
-  origin: 'web-66vzoi1semdv.up-de-fra1-k8s-1.apps.run-on-seenode.com',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type']
-}));
+  origin: (origin, callback) => {
+    // allow requests with no origin 
+   const ACEPTED = [
+    'http://localhost:3000',
+    'https://seenode.seecloud.com',
+    'web-66vzoi1semdv.up-de-fra1-k8s-1.apps.run-on-seenode.com',
+    ];
+    if (ACEPTED.includes(origin)) {
+        return callback(null, true);    
+    }
+    return callback(new Error('Origen CORS no permitido'));
+}}));
 
 
 const granja = new MongoDB(url, 'sample_mflix');
