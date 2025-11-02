@@ -18,7 +18,7 @@ const AccessControl = [
 ] 
 
 app.use(cors({
-  origin: 'https://mi-frontend.com',
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type']
 }));
