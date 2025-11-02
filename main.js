@@ -24,6 +24,8 @@ app.use(cors({
     'http://localhost:3000',
     'https://seenode.seecloud.com',
     'web-66vzoi1semdv.up-de-fra1-k8s-1.apps.run-on-seenode.com',
+    'https://web-66vzoi1semdv.up-de-fra1-k8s-1.apps.run-on-seenode.com'
+    
     ];
     if (ACEPTED.includes(origin)) {
         return callback(null, true);    
@@ -36,6 +38,10 @@ const granja = new MongoDB(url, 'sample_mflix');
 await granja.connect();
 await granja.getCollection('granjapico');
 
+app.get('', async (req, res) => {
+    // Return all documents from the configured collection
+    res.json({message: 'API Granja Pico' });
+});
 app.get('/stock', async (req, res) => {
     // Return all documents from the configured collection
     res.json(await granja.getAll(granja.collection));
