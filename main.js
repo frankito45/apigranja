@@ -18,7 +18,7 @@ const AccessControl = [
 ] 
 
 app.use(cors({
-  origin: '*',
+  origin: 'web-66vzoi1semdv.up-de-fra1-k8s-1.apps.run-on-seenode.com',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type']
 }));
