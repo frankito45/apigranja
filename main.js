@@ -17,21 +17,7 @@ const AccessControl = [
 
 ] 
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // allow requests with no origin 
-   const ACEPTED = [
-    'http://localhost:3000',
-    'https://seenode.seecloud.com',
-    'web-66vzoi1semdv.up-de-fra1-k8s-1.apps.run-on-seenode.com',
-    'https://web-66vzoi1semdv.up-de-fra1-k8s-1.apps.run-on-seenode.com'
-    
-    ];
-    if (ACEPTED.includes(origin)) {
-        return callback(null, true);    
-    }
-    return callback(new Error('Origen CORS no permitido'));
-}}));
+app.use(cors());
 
 
 const granja = new MongoDB(url, 'sample_mflix');
@@ -40,7 +26,7 @@ await granja.getCollection('granjapico');
 
 app.get('', async (req, res) => {
     // Return all documents from the configured collection
-    res.json({message: 'API Granja Pico' });
+    res.writable({message: 'API Granja Pico' });
 });
 app.get('/stock', async (req, res) => {
     // Return all documents from the configured collection
