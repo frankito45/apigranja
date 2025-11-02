@@ -7,15 +7,11 @@ const db_password = process.env.KEY_BD;
 const url = `mongodb+srv://${user}:${db_password}@test.slygxwk.mongodb.net/?appName=test`;
 
 const app = express();
-const port = process.env.PORT || 2000;
+const port = process.env.PORT || 80;
 
 // middleware to parse JSON bodies
 app.use(express.json());
 app.disable('x-powered-by');
-
-const AccessControl = [
-
-] 
 
 app.use(cors());
 
