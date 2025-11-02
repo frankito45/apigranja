@@ -6,14 +6,27 @@ const db_password = process.env.KEY_BD
 
 const url = `mongodb+srv://${user}:${db_password}@test.slygxwk.mongodb.net/?appName=test`;
 
+// Habilitar TLS/SSL por defecto. Puedes controlar esto con las siguientes
+// variables de entorno en entornos donde necesites desactivar la verificación
+// de certificados (solo para desarrollo):
+// - DB_TLS ("true"|"false")  -> si la conexión usa TLS. Por defecto true.
+// - DB_TLS_INSECURE ("true"|"false") -> si se permiten certificados inválidos.
+const tls = process.env.DB_TLS ? process.env.DB_TLS === 'true' : true;
+const tlsAllowInvalidCertificates = process.env.DB_TLS_INSECURE === 'true';
+
 export class MongoDB {
     constructor(url,dbName) {
-        this.client = new MongoClient(url,
-        {
+        this.client = new MongoClient(url, {
             serverApi: {
-            version: ServerApiVersion.v1,
-            strict: true,
-            deprecationErrors: true,}
+                version: ServerApiVersion.v1,
+                strict: true,
+                deprecationErrors: true,
+            },
+            // Opciones TLS/SSL explícitas. Para conexiones a Atlas via mongodb+srv
+            // TLS normalmente está habilitado por defecto, pero las opciones
+            // explícitas ayudan cuando el servidor exige SSL.
+            tls,
+            tlsAllowInvalidCertificates,
         })
 
         this.dbName = dbName;
