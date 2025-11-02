@@ -21,10 +21,6 @@ export class MongoDB {
                 deprecationErrors: true,
             },
             ssl: ssl, // Siempre usar SSL
-            sslValidate: sslValidate, // Validar certificados solo en producción
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            retryWrites: true,
         })
 
         this.dbName = dbName;
