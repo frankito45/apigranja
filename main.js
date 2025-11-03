@@ -8,7 +8,7 @@ import cors from 'cors';
 
 const app = express();
 const port = process.env.PORT || 80;
-// const databd = data; // Cargar datos desde data.json
+// Cargar datos desde data.json
 
 // middleware to parse JSON bodies
 app.use(express.json());
@@ -17,30 +17,31 @@ app.use(cors());
 
 app.get('/', async (req, res) => {
     // Return a simple API message
-    res.json({ message: 'API Granja Pico' });
+    return res.status(200).json({ message: 'API is running' });
 });
 
 
 // Example GET for a single stock item (placeholder)
 app.get('/stock/:id', async (req, res) => {
     const { id } = req.params;
-    // Si tienes una instancia de la BD, aquí la usarías:
-    // const item = await granja.getById(id);
-    // return res.json(item);
+    for (const item of data.files) {
+        if (item.id === parseInt(id)) {
+            return res.status(200).json(item);
+        }else{
+            return res.status(404).json({ message: 'Item not found' });
+        }}});
 
-    // Respuesta de ejemplo cuando no hay BD conectada
-    return res.status(200).json({ id, message: 'Ruta /stock/:id - implementa la búsqueda en la BD' });
+app.get('/stock', async (req, res) => {
+    return res.status(200).json(data.files);
 });
 
-// POST que demuestra recibir JSON en el body
-app.post('/stock', async (req, res) => {
+app.post('/stock/', async (req, res) => {
     const newItem = req.body;
-    console.log('POST /stock received JSON:', newItem);
-
-    // Aquí insertarías en la BD si la tuvieras conectada
-    // await granja.insertItem(newItem);
-
-    return res.status(201).json({ message: 'Item received', item: newItem });
+    const id = data.files.length + 1;
+    newItem.id = id;    
+    data.files.push(newItem);
+    fs.writeFileSync(new URL('./data.json', import.meta.url), JSON.stringify(data, null, 2));
+    return res.status(201).json({ message: 'Item added', item: newItem });
 });
 
 app.listen(port, () => {
