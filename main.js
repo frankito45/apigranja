@@ -1,46 +1,46 @@
 import express from "express";
-import { MongoDB} from './bd.js';
+import fs from 'fs';
+
+// Cargar data.json sin usar import assertions (más compatible)
+const data = JSON.parse(fs.readFileSync(new URL('./data.json', import.meta.url), 'utf8'));
 import cors from 'cors';
 
-const user = process.env.USER_BD;
-const db_password = process.env.KEY_BD;
-const url = `mongodb+srv://${user}:${db_password}@test.slygxwk.mongodb.net/?appName=test`;
 
 const app = express();
 const port = process.env.PORT || 80;
+// const databd = data; // Cargar datos desde data.json
 
 // middleware to parse JSON bodies
 app.use(express.json());
 app.disable('x-powered-by');
-
 app.use(cors());
 
-
-const granja = new MongoDB(url, 'sample_mflix');
-await granja.connect();
-await granja.getCollection('granjapico');
-
-app.get('', async (req, res) => {
-    // Return all documents from the configured collection
-    res.writable({message: 'API Granja Pico' });
-});
-app.get('/stock', async (req, res) => {
-    // Return all documents from the configured collection
-    res.json(await granja.getAll(granja.collection));
+app.get('/', async (req, res) => {
+    // Return a simple API message
+    res.json({ message: 'API Granja Pico' });
 });
 
+
+// Example GET for a single stock item (placeholder)
 app.get('/stock/:id', async (req, res) => {
     const { id } = req.params;
-    const item = await granja.getById(id,granja.collection);
-    return res.json(item);
+    // Si tienes una instancia de la BD, aquí la usarías:
+    // const item = await granja.getById(id);
+    // return res.json(item);
 
+    // Respuesta de ejemplo cuando no hay BD conectada
+    return res.status(200).json({ id, message: 'Ruta /stock/:id - implementa la búsqueda en la BD' });
 });
 
-app.post('/stock/',async (req, res) => {
-    const newItem =  req.body;
-    await granja.insertItem(newItem,granja.collection);
-    return res.status(201).json({ message: 'Item inserted', item: newItem  });
+// POST que demuestra recibir JSON en el body
+app.post('/stock', async (req, res) => {
+    const newItem = req.body;
+    console.log('POST /stock received JSON:', newItem);
 
+    // Aquí insertarías en la BD si la tuvieras conectada
+    // await granja.insertItem(newItem);
+
+    return res.status(201).json({ message: 'Item received', item: newItem });
 });
 
 app.listen(port, () => {
