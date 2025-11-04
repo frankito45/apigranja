@@ -14,7 +14,7 @@ database.getCollection("granjapico");
 
 
 // Cargar data.json sin usar import assertions (más compatible)
-// const data = JSON.parse(fs.readFileSync(new URL('./data.json', import.meta.url), 'utf8'));
+const data = JSON.parse(fs.readFileSync(new URL('./data.json', import.meta.url), 'utf8'));
 import cors from 'cors';
 
 
@@ -28,51 +28,39 @@ app.disable('x-powered-by');
 app.use(cors());
 
 app.get('/', async (req, res) => {
-    try {
-        const dataFromDb = await database.getAll();
-        return res.status(200).json(dataFromDb);
-    } catch (error) {
-        console.error('GET / error accessing DB:', error);
-        return res.status(503).json({ error: 'Service unavailable', details: error.message });
-    }
+    // Return a simple API message
+    res.status(200).json({ message: 'API is running' });
+    
 });
 
 
 app.post('/stock/', async (req, res) => {
     const newItem = req.body;
-    database.insertItem(newItem);
+    const id = data.files.length + 1;
+    newItem.id = id;    
+    data.files.push(newItem);
+    fs.writeFileSync(new URL('./data.json', import.meta.url), JSON.stringify(data, null, 2));
     return res.status(201).json({ message: 'Item added', item: newItem });
-
 });
 
 // Example GET for a single stock item (placeholder)
 app.get('/stock/:id', async (req, res) => {
     const { id } = req.params;
-    const item = await database.getById(id);
-    if (item) {
-        return res.status(200).json(item);
-    } else {
-        return res.status(404).json({ message: 'Item not found'})
-        }});
+    for (const item of data.files) {
+        if (item.id === parseInt(id)) {
+            return res.status(200).json(item);
+        }else{
+            return res.status(404).json({ message: 'Item not found' });
+        }}});
+
+app.get('/stock', async (req, res) => {
+    res.status(200).json(data.files);
+});
 
 
-
-// Esperar a conectar a la BD antes de iniciar el servidor
-async function start() {
-    try {
-        console.log('Connecting to MongoDB...');
-        await database.connect();
-        await database.getCollection(process.env.COLLECTION_NAME || 'granjapico');
-        app.listen(process.env.PORT || port, () => {
-            console.log(`Server listening on http://localhost:${process.env.PORT || port}`);
-        });
-    } catch (error) {
-        console.error('Failed to start server due to DB error:', error);
-        process.exit(1);
-    }
-}
-
-start();
+app.listen(port, () => {
+    console.log(`port http://localhost:${port}`);
+});
 
 
 
