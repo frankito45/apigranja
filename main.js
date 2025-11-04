@@ -28,10 +28,13 @@ app.disable('x-powered-by');
 app.use(cors());
 
 app.get('/', async (req, res) => {
-    // Return a simple API message
-    const dataFromDb =  await database.getAll();
-    console.log(dataFromDb);
-    return res.status(200).json(dataFromDb);
+    try {
+        const dataFromDb = await database.getAll();
+        return res.status(200).json(dataFromDb);
+    } catch (error) {
+        console.error('GET / error accessing DB:', error);
+        return res.status(503).json({ error: 'Service unavailable', details: error.message });
+    }
 });
 
 
@@ -54,9 +57,22 @@ app.get('/stock/:id', async (req, res) => {
 
 
 
-app.listen(port, () => {
-    console.log(`port http://localhost:${port}`);
-});
+// Esperar a conectar a la BD antes de iniciar el servidor
+async function start() {
+    try {
+        console.log('Connecting to MongoDB...');
+        await database.connect();
+        await database.getCollection(process.env.COLLECTION_NAME || 'granjapico');
+        app.listen(process.env.PORT || port, () => {
+            console.log(`Server listening on http://localhost:${process.env.PORT || port}`);
+        });
+    } catch (error) {
+        console.error('Failed to start server due to DB error:', error);
+        process.exit(1);
+    }
+}
+
+start();
 
 
 
