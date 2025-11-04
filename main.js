@@ -1,15 +1,5 @@
 import express from "express";
 import fs from 'fs';
-import { MongoDB } from './bd.js';
-
-const user = process.env.USER_BD;
-const password = process.env.KEY_BD;
-
-const url = `mongodb+srv://${user}:${password}@test.slygxwk.mongodb.net/?ssl=true&retryWrites=true&w=majority`;
-// cargar base de datos 
-const database = new MongoDB(url,"sample_mflix")
-database.connect();
-database.getCollection("granjapico");
 
 
 
@@ -36,6 +26,7 @@ app.get('/', async (req, res) => {
 
 app.post('/stock/', async (req, res) => {
     const newItem = req.body;
+    
     const id = data.files.length + 1;
     newItem.id = id;    
     data.files.push(newItem);
