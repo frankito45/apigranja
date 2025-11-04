@@ -46,6 +46,42 @@
       "menudo": 10,
       "rebosador": 10,
       "id": 4
+    },
+    {
+      "local": "centaral Glew",
+      "fecha": "3/11/2025",
+      "pollo": 30,
+      "mila": 20,
+      "pata": 30,
+      "alita": 30,
+      "suprema": 203,
+      "menudo": 103,
+      "rebosador": 10,
+      "id": 5
+    },
+    {
+      "local": "centaral Glew",
+      "fecha": "3/11/2025",
+      "pollo": 30,
+      "mila": 20,
+      "pata": 30,
+      "alita": 30,
+      "suprema": 203,
+      "menudo": 103,
+      "rebosador": 10,
+      "id": 6
+    },
+    {
+      "local": "centaral Glew",
+      "fecha": "3/11/2025",
+      "pollo": 30,
+      "mila": 20,
+      "pata": 30,
+      "alita": 30,
+      "suprema": 203,
+      "menudo": 103,
+      "rebosador": 10,
+      "id": 7
     }
   ]
 }
