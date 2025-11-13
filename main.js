@@ -37,12 +37,13 @@ app.post('/stock/', async (req, res) => {
 // Example GET for a single stock item (placeholder)
 app.get('/stock/:id', async (req, res) => {
     const { id } = req.params;
-    for (const item of data.files) {
-        if (item.id === parseInt(id)) {
-            return res.status(200).json(item);
-        }else{
-            return res.status(404).json({ message: 'Item not found' });
-        }}});
+    const item = data.files.find(element => element.id === parseInt(id));
+    if(item){
+        return res.status(200).json(item);
+    }else{
+        return res.status(404).json({'mensaje':'data no found'});
+    }
+});
 
 app.get('/stock', async (req, res) => {
     res.status(200).json(data.files);
